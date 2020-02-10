@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 mongoose.connect('mongodb://localhost:27017/product', 
 { useNewUrlParser: true,  useUnifiedTopology: true 
 });
+mongoose.Promise=global.Promise;
 
 //rout
 app.use('/products',productRoutes);

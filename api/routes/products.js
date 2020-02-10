@@ -12,16 +12,29 @@ router.get('/', (req, res, next) => {
     // });
 
 Product.find()
+.select('name price _id')
 .exec()
 .then(docs=>{
-    console.log(docs);
-    if (docs.length>=0){
-        res.status(200).json(docs);
-    }else{
+    const response={
+        count:docs.length,
+        products:docs.map(doc=>{
+            return{
+                name:doc.name,
+                price:doc.price,
+                _id:doc._id,
+                url:{
+                    type:"get",
+                    url:"http://localhost:3000/products/"+doc._id
+                }
+            }
+        })
+    }
+    res.status(200).json(response);
+   
         res.status(404).json({
             message:"no entries found"
         });
-    }
+    
 })
 .catch(err=>{
     console.log(err);
@@ -40,11 +53,25 @@ const product=new Product({
     name:req.body.name,
     price:req.body.price
 });
-product.save().then(result=>{
+product
+.save()
+.then(result=>{
     console.log(result);
+    res.status(201).json({
+        message:"Created Product Successfully",
+        createProduct:{
+            name:result.name,
+            price:result.price,
+            _id:result._id,
+            url:{
+                type:"get",
+                url:"http://localhost:3000/products/"+result._id
+            }
+        }
+    })
 })
      .catch(err=>console.log(err));
-    res.status(201).json({
+    res.status(404).json({
         message: "handeling post req",
         createProduct : product 
     });
