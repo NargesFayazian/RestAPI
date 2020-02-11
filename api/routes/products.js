@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose=require('mongoose');
 const router = express.Router();
-const Product= require('../models/product')
+const Product= require('../models/product');
+const checkAuth=require('../middleware/check-auth');
 
 // ===================Get======================================================================
 router.get('/', (req, res, next) => {
@@ -77,7 +78,7 @@ product
     });
 });
 
-router.get('/:productId', (req, res, next) => {
+router.get('/:productId', checkAuth,(req, res, next) => {
     const id =req.params.productId;
     Product.findById(id)
     .then(doc=>{
